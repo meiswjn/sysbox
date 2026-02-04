@@ -21,3 +21,8 @@ Improve `sysbox-pkgr/k8s` artifacts to support AKS-style containerd deployments 
 
 ## Notes
 - The repo docs still emphasize CRI-O for userns; however `install-no-crio` exists and is now functional for containerd-based clusters.
+
+## Follow-up (debug-log-driven)
+- From AKS node `/etc/containerd/config.toml`, the `sysbox-runc` runtime handler stanza was missing `BinaryName`, while `runc` had `BinaryName = "/usr/bin/runc"`.
+- Updated `sysbox-deploy-k8s.sh` to always set `BinaryName` for the `sysbox-runc` runtime handler to the detected host sysbox-runc path (e.g., `/usr/bin/sysbox-runc`; fallback to `/opt/bin/sysbox-runc` for Flatcar-style layouts), while keeping `SystemdCgroup` inheritance.
+- Bumped the parent repo `sysbox-pkgr` submodule pointer to include the fix.

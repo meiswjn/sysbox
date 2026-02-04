@@ -9,6 +9,9 @@ build
 image/deb/debbuild/
 image/deb/sources/
 
+# Ignore local debug artifacts collected during investigations.
+sysbox-debug-logs/
+
 # GNU Global Tags
 GPATH
 GRTAGS
