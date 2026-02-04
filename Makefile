@@ -71,6 +71,14 @@ SYSMGR_DIR      := sysbox-mgr
 SYSIPC_DIR      := sysbox-ipc
 SYSLIBS_DIR     := sysbox-libs
 
+# Some environments end up with lowercase 'makefile' in submodules (or lack a
+# capitalized 'Makefile'). Pick whatever exists to avoid build/clean failures.
+subrepo_mkfile = $(notdir $(firstword $(wildcard $(1)/Makefile $(1)/makefile $(1)/GNUmakefile)))
+SYSRUNC_MKFILE := $(call subrepo_mkfile,$(SYSRUNC_DIR))
+SYSFS_MKFILE   := $(call subrepo_mkfile,$(SYSFS_DIR))
+SYSMGR_MKFILE  := $(call subrepo_mkfile,$(SYSMGR_DIR))
+SYSIPC_MKFILE  := $(call subrepo_mkfile,$(SYSIPC_DIR))
+
 PROJECT := /root/nestybox/sysbox
 
 # Sysbox binary targets destination.
@@ -218,43 +226,43 @@ sysbox-debug-local: sysbox-runc-debug sysbox-fs-debug sysbox-mgr-debug
 sysbox-static-local: sysbox-runc-static sysbox-fs-static sysbox-mgr-static
 
 sysbox-runc: sysbox-ipc
-	@$(MAKE) -C $(SYSRUNC_DIR) -f Makefile
+	@$(MAKE) -C $(SYSRUNC_DIR) $(if $(SYSRUNC_MKFILE),-f $(SYSRUNC_MKFILE),)
 	@cd $(SYSRUNC_DIR) && chown -R $(HOST_UID):$(HOST_GID) build
 
 sysbox-runc-debug: sysbox-ipc
-	@$(MAKE) -C $(SYSRUNC_DIR) -f Makefile sysbox-runc-debug
+	@$(MAKE) -C $(SYSRUNC_DIR) $(if $(SYSRUNC_MKFILE),-f $(SYSRUNC_MKFILE),) sysbox-runc-debug
 	@cd $(SYSRUNC_DIR) && chown -R $(HOST_UID):$(HOST_GID) build
 
 sysbox-runc-static: sysbox-ipc
-	@$(MAKE) -C $(SYSRUNC_DIR) -f Makefile static
+	@$(MAKE) -C $(SYSRUNC_DIR) $(if $(SYSRUNC_MKFILE),-f $(SYSRUNC_MKFILE),) static
 	@cd $(SYSRUNC_DIR) && chown -R $(HOST_UID):$(HOST_GID) build
 
 sysbox-fs: sysbox-ipc
-	@$(MAKE) -C $(SYSFS_DIR) -f Makefile
+	@$(MAKE) -C $(SYSFS_DIR) $(if $(SYSFS_MKFILE),-f $(SYSFS_MKFILE),)
 	@cd $(SYSFS_DIR) && chown -R $(HOST_UID):$(HOST_GID) build
 
 sysbox-fs-debug: sysbox-ipc
-	@$(MAKE) -C $(SYSFS_DIR) -f Makefile sysbox-fs-debug
+	@$(MAKE) -C $(SYSFS_DIR) $(if $(SYSFS_MKFILE),-f $(SYSFS_MKFILE),) sysbox-fs-debug
 	@cd $(SYSFS_DIR) && chown -R $(HOST_UID):$(HOST_GID) build
 
 sysbox-fs-static: sysbox-ipc
-	@$(MAKE) -C $(SYSFS_DIR) -f Makefile sysbox-fs-static
+	@$(MAKE) -C $(SYSFS_DIR) $(if $(SYSFS_MKFILE),-f $(SYSFS_MKFILE),) sysbox-fs-static
 	@cd $(SYSFS_DIR) && chown -R $(HOST_UID):$(HOST_GID) build
 
 sysbox-mgr: sysbox-ipc
-	@$(MAKE) -C $(SYSMGR_DIR) -f Makefile
+	@$(MAKE) -C $(SYSMGR_DIR) $(if $(SYSMGR_MKFILE),-f $(SYSMGR_MKFILE),)
 	@cd $(SYSMGR_DIR) && chown -R $(HOST_UID):$(HOST_GID) build
 
 sysbox-mgr-debug: sysbox-ipc
-	@$(MAKE) -C $(SYSMGR_DIR) -f Makefile sysbox-mgr-debug
+	@$(MAKE) -C $(SYSMGR_DIR) $(if $(SYSMGR_MKFILE),-f $(SYSMGR_MKFILE),) sysbox-mgr-debug
 	@cd $(SYSMGR_DIR) && chown -R $(HOST_UID):$(HOST_GID) build
 
 sysbox-mgr-static: sysbox-ipc
-	@$(MAKE) -C $(SYSMGR_DIR) -f Makefile sysbox-mgr-static
+	@$(MAKE) -C $(SYSMGR_DIR) $(if $(SYSMGR_MKFILE),-f $(SYSMGR_MKFILE),) sysbox-mgr-static
 	@cd $(SYSMGR_DIR) && chown -R $(HOST_UID):$(HOST_GID) build
 
 sysbox-ipc:
-	@$(MAKE) -C $(SYSIPC_DIR) -f Makefile sysbox-ipc
+	@$(MAKE) -C $(SYSIPC_DIR) $(if $(SYSIPC_MKFILE),-f $(SYSIPC_MKFILE),) sysbox-ipc
 	@cd $(SYSIPC_DIR) && chown -R $(HOST_UID):$(HOST_GID) *
 
 #
@@ -576,26 +584,26 @@ listSysboxLibsPkgs:
 
 gomod-tidy: ## Clean go.mod and go.sum files across the Sysbox subrepos
 gomod-tidy:
-	@$(MAKE) -C $(SYSIPC_DIR) -f Makefile gomod-tidy
-	@$(MAKE) -C $(SYSRUNC_DIR) -f Makefile gomod-tidy
-	@$(MAKE) -C $(SYSMGR_DIR) -f Makefile gomod-tidy
-	@$(MAKE) -C $(SYSFS_DIR) -f Makefile gomod-tidy
+	@$(MAKE) -C $(SYSIPC_DIR) $(if $(SYSIPC_MKFILE),-f $(SYSIPC_MKFILE),) gomod-tidy
+	@$(MAKE) -C $(SYSRUNC_DIR) $(if $(SYSRUNC_MKFILE),-f $(SYSRUNC_MKFILE),) gomod-tidy
+	@$(MAKE) -C $(SYSMGR_DIR) $(if $(SYSMGR_MKFILE),-f $(SYSMGR_MKFILE),) gomod-tidy
+	@$(MAKE) -C $(SYSFS_DIR) $(if $(SYSFS_MKFILE),-f $(SYSFS_MKFILE),) gomod-tidy
 
 clean: ## Eliminate sysbox binaries
 clean:
-	$(MAKE) -C $(SYSRUNC_DIR) -f Makefile clean TARGET_ARCH=$(TARGET_ARCH)
-	$(MAKE) -C $(SYSFS_DIR) -f Makefile clean TARGET_ARCH=$(TARGET_ARCH)
-	$(MAKE) -C $(SYSMGR_DIR) -f Makefile clean TARGET_ARCH=$(TARGET_ARCH)
-	$(MAKE) -C $(SYSIPC_DIR) -f Makefile clean TARGET_ARCH=$(TARGET_ARCH)
+	$(MAKE) -C $(SYSRUNC_DIR) $(if $(SYSRUNC_MKFILE),-f $(SYSRUNC_MKFILE),) clean TARGET_ARCH=$(TARGET_ARCH)
+	$(MAKE) -C $(SYSFS_DIR) $(if $(SYSFS_MKFILE),-f $(SYSFS_MKFILE),) clean TARGET_ARCH=$(TARGET_ARCH)
+	$(MAKE) -C $(SYSMGR_DIR) $(if $(SYSMGR_MKFILE),-f $(SYSMGR_MKFILE),) clean TARGET_ARCH=$(TARGET_ARCH)
+	$(MAKE) -C $(SYSIPC_DIR) $(if $(SYSIPC_MKFILE),-f $(SYSIPC_MKFILE),) clean TARGET_ARCH=$(TARGET_ARCH)
 	rm -rf ./build/$(TARGET_ARCH)
 
 
 distclean: ## Eliminate all sysbox binaries
 distclean:
-	$(MAKE) -C $(SYSRUNC_DIR) -f Makefile distclean
-	$(MAKE) -C $(SYSFS_DIR) -f Makefile distclean
-	$(MAKE) -C $(SYSMGR_DIR) -f Makefile distclean
-	$(MAKE) -C $(SYSIPC_DIR) -f Makefile distclean
+	$(MAKE) -C $(SYSRUNC_DIR) $(if $(SYSRUNC_MKFILE),-f $(SYSRUNC_MKFILE),) distclean
+	$(MAKE) -C $(SYSFS_DIR) $(if $(SYSFS_MKFILE),-f $(SYSFS_MKFILE),) distclean
+	$(MAKE) -C $(SYSMGR_DIR) $(if $(SYSMGR_MKFILE),-f $(SYSMGR_MKFILE),) distclean
+	$(MAKE) -C $(SYSIPC_DIR) $(if $(SYSIPC_MKFILE),-f $(SYSIPC_MKFILE),) distclean
 	rm -rf ./build
 
 # memoize all packages once
