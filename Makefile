@@ -218,43 +218,43 @@ sysbox-debug-local: sysbox-runc-debug sysbox-fs-debug sysbox-mgr-debug
 sysbox-static-local: sysbox-runc-static sysbox-fs-static sysbox-mgr-static
 
 sysbox-runc: sysbox-ipc
-	@cd $(SYSRUNC_DIR) && make
+	@$(MAKE) -C $(SYSRUNC_DIR) -f Makefile
 	@cd $(SYSRUNC_DIR) && chown -R $(HOST_UID):$(HOST_GID) build
 
 sysbox-runc-debug: sysbox-ipc
-	@cd $(SYSRUNC_DIR) && make sysbox-runc-debug
+	@$(MAKE) -C $(SYSRUNC_DIR) -f Makefile sysbox-runc-debug
 	@cd $(SYSRUNC_DIR) && chown -R $(HOST_UID):$(HOST_GID) build
 
 sysbox-runc-static: sysbox-ipc
-	@cd $(SYSRUNC_DIR) && make static
+	@$(MAKE) -C $(SYSRUNC_DIR) -f Makefile static
 	@cd $(SYSRUNC_DIR) && chown -R $(HOST_UID):$(HOST_GID) build
 
 sysbox-fs: sysbox-ipc
-	@cd $(SYSFS_DIR) && make
+	@$(MAKE) -C $(SYSFS_DIR) -f Makefile
 	@cd $(SYSFS_DIR) && chown -R $(HOST_UID):$(HOST_GID) build
 
 sysbox-fs-debug: sysbox-ipc
-	@cd $(SYSFS_DIR) && make sysbox-fs-debug
+	@$(MAKE) -C $(SYSFS_DIR) -f Makefile sysbox-fs-debug
 	@cd $(SYSFS_DIR) && chown -R $(HOST_UID):$(HOST_GID) build
 
 sysbox-fs-static: sysbox-ipc
-	@cd $(SYSFS_DIR) && make sysbox-fs-static
+	@$(MAKE) -C $(SYSFS_DIR) -f Makefile sysbox-fs-static
 	@cd $(SYSFS_DIR) && chown -R $(HOST_UID):$(HOST_GID) build
 
 sysbox-mgr: sysbox-ipc
-	@cd $(SYSMGR_DIR) && make
+	@$(MAKE) -C $(SYSMGR_DIR) -f Makefile
 	@cd $(SYSMGR_DIR) && chown -R $(HOST_UID):$(HOST_GID) build
 
 sysbox-mgr-debug: sysbox-ipc
-	@cd $(SYSMGR_DIR) && make sysbox-mgr-debug
+	@$(MAKE) -C $(SYSMGR_DIR) -f Makefile sysbox-mgr-debug
 	@cd $(SYSMGR_DIR) && chown -R $(HOST_UID):$(HOST_GID) build
 
 sysbox-mgr-static: sysbox-ipc
-	@cd $(SYSMGR_DIR) && make sysbox-mgr-static
+	@$(MAKE) -C $(SYSMGR_DIR) -f Makefile sysbox-mgr-static
 	@cd $(SYSMGR_DIR) && chown -R $(HOST_UID):$(HOST_GID) build
 
 sysbox-ipc:
-	@cd $(SYSIPC_DIR) && make sysbox-ipc
+	@$(MAKE) -C $(SYSIPC_DIR) -f Makefile sysbox-ipc
 	@cd $(SYSIPC_DIR) && chown -R $(HOST_UID):$(HOST_GID) *
 
 #
@@ -576,26 +576,26 @@ listSysboxLibsPkgs:
 
 gomod-tidy: ## Clean go.mod and go.sum files across the Sysbox subrepos
 gomod-tidy:
-	@cd $(SYSIPC_DIR) && make gomod-tidy
-	@cd $(SYSRUNC_DIR) && make gomod-tidy
-	@cd $(SYSMGR_DIR) && make gomod-tidy
-	@cd $(SYSFS_DIR) && make gomod-tidy
+	@$(MAKE) -C $(SYSIPC_DIR) -f Makefile gomod-tidy
+	@$(MAKE) -C $(SYSRUNC_DIR) -f Makefile gomod-tidy
+	@$(MAKE) -C $(SYSMGR_DIR) -f Makefile gomod-tidy
+	@$(MAKE) -C $(SYSFS_DIR) -f Makefile gomod-tidy
 
 clean: ## Eliminate sysbox binaries
 clean:
-	cd $(SYSRUNC_DIR) && make clean TARGET_ARCH=$(TARGET_ARCH)
-	cd $(SYSFS_DIR) && make clean TARGET_ARCH=$(TARGET_ARCH)
-	cd $(SYSMGR_DIR) && make clean TARGET_ARCH=$(TARGET_ARCH)
-	cd $(SYSIPC_DIR) && make clean TARGET_ARCH=$(TARGET_ARCH)
+	$(MAKE) -C $(SYSRUNC_DIR) -f Makefile clean TARGET_ARCH=$(TARGET_ARCH)
+	$(MAKE) -C $(SYSFS_DIR) -f Makefile clean TARGET_ARCH=$(TARGET_ARCH)
+	$(MAKE) -C $(SYSMGR_DIR) -f Makefile clean TARGET_ARCH=$(TARGET_ARCH)
+	$(MAKE) -C $(SYSIPC_DIR) -f Makefile clean TARGET_ARCH=$(TARGET_ARCH)
 	rm -rf ./build/$(TARGET_ARCH)
 
 
 distclean: ## Eliminate all sysbox binaries
 distclean:
-	cd $(SYSRUNC_DIR) && make distclean
-	cd $(SYSFS_DIR) && make distclean
-	cd $(SYSMGR_DIR) && make distclean
-	cd $(SYSIPC_DIR) && make distclean
+	$(MAKE) -C $(SYSRUNC_DIR) -f Makefile distclean
+	$(MAKE) -C $(SYSFS_DIR) -f Makefile distclean
+	$(MAKE) -C $(SYSMGR_DIR) -f Makefile distclean
+	$(MAKE) -C $(SYSIPC_DIR) -f Makefile distclean
 	rm -rf ./build
 
 # memoize all packages once
