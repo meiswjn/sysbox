@@ -7,6 +7,7 @@ Improve `sysbox-pkgr/k8s` artifacts to support AKS-style containerd deployments 
 - Added containerd config snippet for containerd CRI plugin key `io.containerd.grpc.v1.cri`.
 - Updated `sysbox-deploy-k8s.sh` to:
   - Select the appropriate containerd config snippet based on host `/etc/containerd/config.toml`.
+  - Inherit `SystemdCgroup` from the host containerd config when adding `sysbox-runc` (AKS sets it to `true`).
   - Fail fast if containerd config is missing.
   - Restart containerd after changing/restoring config (install-no-crio + cleanup without CRI-O).
 - Updated `sysbox-pkgr/k8s/Dockerfile.sysbox-ce` to include the containerd config snippets under `/opt/sysbox/config/`.
